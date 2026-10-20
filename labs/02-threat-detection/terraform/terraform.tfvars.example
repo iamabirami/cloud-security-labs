@@ -1,0 +1,6 @@
+# Copy to terraform.tfvars and edit. terraform.tfvars is git-ignored.
+aws_region             = "eu-west-2"
+aws_profile            = "sandbox"
+name_prefix            = "lab02"
+alert_email            = "you@example.com"
+guardduty_min_severity = 4

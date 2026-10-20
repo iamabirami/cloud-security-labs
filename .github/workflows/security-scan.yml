@@ -1,0 +1,54 @@
+name: Security scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: Secret scan (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  terraform:
+    name: Terraform format & validate
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lab:
+          - labs/01-iam-least-privilege/terraform
+          - labs/02-threat-detection/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - name: Format check
+        run: terraform fmt -check -recursive
+        working-directory: ${{ matrix.lab }}
+      - name: Init (no backend, no credentials)
+        run: terraform init -backend=false
+        working-directory: ${{ matrix.lab }}
+      - name: Validate
+        run: terraform validate
+        working-directory: ${{ matrix.lab }}
+
+  iac-scan:
+    name: IaC misconfiguration scan (Checkov)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: labs
+          framework: terraform
+          quiet: true
+          soft_fail: true # report findings without blocking while labs evolve

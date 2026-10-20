@@ -1,0 +1,42 @@
+# --- Terraform ---
+# State files can contain secrets and resource IDs: never commit them
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+crash.log
+crash.*.log
+*.tfplan
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Variable files usually hold real account values; commit only *.tfvars.example
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+
+# --- Credentials & keys ---
+.aws/
+credentials
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+.env
+.env.*
+!.env.example
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
